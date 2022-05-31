@@ -1,5 +1,31 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
+}
+
+// 1. 增加上传源码的task
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = "sources"
+}
+
+afterEvaluate {// components.release 只有在配置完成之后，才能拿到值
+    publishing {
+        // 配置maven 仓库
+        repositories { RepositoryHandler handler ->
+            handler.mavenLocal()
+        }
+        publications { PublicationContainer publicationContainer ->
+            mavenAar(MavenPublication) {
+                from components.release
+                artifact sourceJar
+                groupId = "com.github.tangrun"
+                if ("unspecified".equals(version)) {
+                    version = "debug"
+                }
+            }
+        }
+    }
 }
 
 android {
