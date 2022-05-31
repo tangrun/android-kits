@@ -55,6 +55,7 @@ android {
 
 dependencies {
     compileOnly 'androidx.appcompat:appcompat:1.2.0'
+    compileOnly 'androidx.constraintlayout:constraintlayout:2.0.4'
     compileOnly 'androidx.recyclerview:recyclerview:1.2.0'
     compileOnly 'androidx.constraintlayout:constraintlayout:2.0.4'
     compileOnly 'com.squareup.okhttp3:logging-interceptor:4.3.0'
