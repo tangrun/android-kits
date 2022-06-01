@@ -47,6 +47,14 @@ public class ActivityResultHelper extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        int code = getArguments().getInt("code");
+        Intent data = getArguments().getParcelable("data");
+        startActivityForResult(data, code);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         OnActivityResultCallback callback = sArray.get(requestCode);
