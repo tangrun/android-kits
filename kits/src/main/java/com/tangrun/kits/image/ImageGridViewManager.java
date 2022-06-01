@@ -37,20 +37,8 @@ public class ImageGridViewManager {
         internalRegisterGlobalLoader(byte[].class, loader);
         internalRegisterGlobalLoader(Bitmap.class, loader);
         internalRegisterGlobalLoader(String.class, loader);
-        internalRegisterGlobalLoader(Drawable.class, new ImageGridViewImageLoader<Drawable>() {
-            @Override
-            public void onLoad(ImageView imageView, Drawable drawable) {
-                imageView.setImageDrawable(drawable);
-            }
-        });
-        internalRegisterGlobalLoader(Integer.class, new ImageGridViewImageLoader<Integer>() {
-            @Override
-            public void onLoad(ImageView imageView, Integer integer) {
-                Glide.with(imageView)
-                        .load(integer)
-                        .into(imageView);
-            }
-        });
+        internalRegisterGlobalLoader(Drawable.class, loader);
+        internalRegisterGlobalLoader(Integer.class, loader);
         internalRegisterGlobalLoader(URL.class, loader);
     }
 
