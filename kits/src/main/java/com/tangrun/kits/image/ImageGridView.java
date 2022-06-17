@@ -4,12 +4,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.widget.Adapter;
+import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.tangrun.kits.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImageGridView extends RecyclerView {
@@ -30,25 +31,41 @@ public class ImageGridView extends RecyclerView {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        manager = new GridLayoutManager(context, 3);
-        super.setLayoutManager(manager);
+
+
         adapter = new ImageGridViewAdapter();
         super.setAdapter(adapter);
 
         setOverScrollMode(OVER_SCROLL_NEVER);
-
         TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.ImageGridView);
         setCanClear(typedArray.getBoolean(R.styleable.ImageGridView_canClear, false));
         setCanAdd(typedArray.getBoolean(R.styleable.ImageGridView_canAdd, false));
         setCanDrag(typedArray.getBoolean(R.styleable.ImageGridView_canDrag, false));
         setMaxSize(typedArray.getInteger(R.styleable.ImageGridView_maxSize, 9));
-        setAddItemImage(typedArray.getInteger(R.styleable.ImageGridView_addItemImage, R.drawable.ic_baseline_add_box_24));
+        setAddItemImage(typedArray.getResourceId(R.styleable.ImageGridView_addItemImage, R.drawable.kits_baseline_add_box_24));
         setDragItemBackgroundColor(typedArray.getColor(R.styleable.ImageGridView_dragItemBackgroundColor, Color.parseColor("#E8E8E8")));
-        manager.setSpanCount(typedArray.getInteger(R.styleable.ImageGridView_itemCount, 3));
+
+        manager = new GridLayoutManager(context, typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3));
+        super.setLayoutManager(manager);
 
         typedArray.recycle();
 
+        if (isInEditMode()) {
+            ImageGridViewAdapter.globalLoaderMap.put(Integer.class, new ImageGridViewImageLoader<Integer>() {
+                @Override
+                public void onLoad(ImageView imageView, Integer integer) {
+                    imageView.setImageResource(integer);
+                }
+            });
+            int integer = typedArray.getInteger(R.styleable.ImageGridView_itemCount, 1);
+            List<Object> objectList = new ArrayList<>();
+            for (int i = 0; i < integer; i++) {
+                objectList.add(R.drawable.kits_baseline_image_24);
+            }
+            addImages(objectList);
+        }
     }
+
 
     public void setDragItemBackgroundColor(int color) {
         adapter.dragItemBackgroundColor = color;
@@ -97,6 +114,15 @@ public class ImageGridView extends RecyclerView {
 
     public void removeImage(int position) {
         adapter.removeImage(position);
+    }
+
+    public void setImages(List<Object> images) {
+        adapter.objectList.clear();
+        addImages(images);
+    }
+
+    public void addImages(List<Object> images) {
+        adapter.addImages(images);
     }
 
     public void addImage(Object image) {

@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.tangrun.kits.R;
 
 import java.io.File;
 import java.net.URL;
@@ -29,6 +31,10 @@ public class ImageGridViewManager {
             public void onLoad(ImageView imageView, Object o) {
                 Glide.with(imageView)
                         .load(o)
+                        .apply(new RequestOptions()
+                                .placeholder(R.drawable.kits_baseline_image_24)
+                                .error(R.drawable.kits_baseline_broken_image_24)
+                        )
                         .into(imageView);
             }
         };

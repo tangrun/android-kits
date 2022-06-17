@@ -1,7 +1,6 @@
 package com.tangrun.kits.image;
 
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,13 +35,13 @@ class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.Vie
 
         @Override
         public boolean isLongPressDragEnabled() {
-            Log.d("TAG", "isLongPressDragEnabled() called");
+//            Log.d("TAG", "isLongPressDragEnabled() called");
             return canDrag;
         }
 
         @Override
         public boolean isItemViewSwipeEnabled() {
-            Log.d("TAG", "isItemViewSwipeEnabled() called");
+//            Log.d("TAG", "isItemViewSwipeEnabled() called");
             return false;
         }
 
@@ -55,26 +54,26 @@ class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.Vie
 
         @Override
         public boolean canDropOver(RecyclerView recyclerView, RecyclerView.ViewHolder current, RecyclerView.ViewHolder target) {
-            Log.d("TAG", "canDropOver() called with: recyclerView = [" + recyclerView + "], current = [" + current + "], target = [" + target + "]");
+//            Log.d("TAG", "canDropOver() called with: recyclerView = [" + recyclerView + "], current = [" + current + "], target = [" + target + "]");
             return ImageGridViewAdapter.this.canDropOver(current.getLayoutPosition(), target.getLayoutPosition());
         }
 
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            Log.d("TAG", "getMovementFlags() called with: recyclerView = [" + recyclerView + "], viewHolder = [" + viewHolder + "]");
+//            Log.d("TAG", "getMovementFlags() called with: recyclerView = [" + recyclerView + "], viewHolder = [" + viewHolder + "]");
             return makeMovementFlags(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
         }
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            Log.d("TAG", "onMove() called with: recyclerView = [" + recyclerView + "], viewHolder = [" + viewHolder + "], target = [" + target + "]");
+//            Log.d("TAG", "onMove() called with: recyclerView = [" + recyclerView + "], viewHolder = [" + viewHolder + "], target = [" + target + "]");
             ImageGridViewAdapter.this.onMove(viewHolder.getLayoutPosition(), target.getLayoutPosition());
             return false;
         }
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            Log.d("TAG", "onSwiped() called with: viewHolder = [" + viewHolder + "], direction = [" + direction + "]");
+//            Log.d("TAG", "onSwiped() called with: viewHolder = [" + viewHolder + "], direction = [" + direction + "]");
         }
 
     });
@@ -94,7 +93,7 @@ class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.Vie
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_grid_view, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.kits_item_image_grid_view, parent, false));
     }
 
     void startDrag(ViewHolder holder) {
@@ -182,7 +181,6 @@ class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.Vie
     }
 
     public void onMove(int fromPosition, int toPosition) {
-        Log.d("TAG", "onMove() called with: fromPosition = [" + fromPosition + "], toPosition = [" + toPosition + "]");
         if (showAddItem() && toPosition == getItemCount() - 1)
             return;
         objectList.add(toPosition, objectList.remove(fromPosition));
@@ -197,17 +195,21 @@ class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.Vie
         return current != position && target != position;
     }
 
+    public void addImages(List<Object> images) {
+        if (images == null || images.isEmpty()) return;
+        for (Object o : images) {
+            if (o != null){
+                objectList.add(o);
+            }
+            if (objectList.size() == maxSize)
+                break;
+        }
+        notifyDataSetChanged();
+    }
+
     public void addImage(Object image) {
-        if (objectList.size() == maxSize) return;
-        int oldCount = getItemCount();
+        if (image ==null || objectList.size() == maxSize) return;
         objectList.add(image);
-        int newCount = getItemCount();
-        int position = newCount - 1;
-//        if (newCount == oldCount || newCount == maxSize)
-//            notifyItemChanged(position);
-//        else {
-//            notifyItemInserted(position - 1);
-//        }
         notifyDataSetChanged();
     }
 

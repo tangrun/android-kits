@@ -7,6 +7,7 @@
         <attr name="canAdd" format="boolean"/>
         <attr name="canClear" format="boolean"/>
         <attr name="canDrag" format="boolean"/>
+        <attr name="spanCount" format="integer"/>
         <attr name="itemCount" format="integer"/>
     </declare-styleable>
 </resources>
