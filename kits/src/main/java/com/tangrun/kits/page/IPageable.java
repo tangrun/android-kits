@@ -1,6 +1,6 @@
 package com.tangrun.kits.page;
 
-public interface IPageable extends IPageQuery{
+public interface IPageable extends IPageQuery {
 
     int getPageSize();
 
@@ -9,4 +9,8 @@ public interface IPageable extends IPageQuery{
     void setLoadFail();
 
     void setLoadSuccess(int size);
+
+    default void setLoadSuccess(IGetLoadPageDataSize size) {
+        setLoadSuccess(size.getLoadPageDataSize());
+    }
 }

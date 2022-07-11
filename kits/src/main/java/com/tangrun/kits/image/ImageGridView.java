@@ -51,7 +51,7 @@ public class ImageGridView extends RecyclerView {
         typedArray.recycle();
 
         if (isInEditMode()) {
-            ImageGridViewAdapter.globalLoaderMap.put(Integer.class, new ImageGridViewImageLoader<Integer>() {
+            ImageGridViewAdapter.globalLoaderMap.put(Integer.class, new ImageLoader<Integer>() {
                 @Override
                 public void onLoad(ImageView imageView, Integer integer) {
                     imageView.setImageResource(integer);

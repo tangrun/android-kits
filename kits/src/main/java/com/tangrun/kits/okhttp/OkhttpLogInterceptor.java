@@ -3,12 +3,15 @@ package com.tangrun.kits.okhttp;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
+import androidx.annotation.IntDef;
 import okhttp3.*;
 import okio.Buffer;
 import okio.BufferedSink;
 import okio.BufferedSource;
 
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
@@ -18,12 +21,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * okhttp 请求内容日志输出
  * @author RainTang
  * @description:
  * @date :2020/12/24 11:10
  */
 public class OkhttpLogInterceptor implements Interceptor {
-    private static final String TAG = "OkHttpLog";
+    private String logTag = "OkHttpLog";
+    @LogLevel
+    private int logLevel = Log.DEBUG;
+    private int logLineMaxLength = 2048;
+
+    @IntDef({Log.INFO, Log.DEBUG, Log.WARN, Log.ERROR})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface LogLevel {
+    }
+
+    public void setLogTag(String logTag) {
+        this.logTag = logTag;
+    }
+
+    public void setLogLevel(@LogLevel int logLevel) {
+        this.logLevel = logLevel;
+    }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -31,18 +51,18 @@ public class OkhttpLogInterceptor implements Interceptor {
         int tag = request.hashCode();
         logRequest(tag, request);
         long startTime = SystemClock.elapsedRealtime();
-        Response response =null;
+        Response response = null;
         try {
             response = chain.proceed(request);
         } catch (Exception e) {
             this.log(String.format("------------end " + tag + " 请求异常%s----------------------------", e.getMessage()));
             throw e;
         }
-        if (response !=null){
+        if (response != null) {
             try {
                 this.logResponse(tag, response);
                 this.log(String.format("------------end " + tag + " 耗时%dms----------------------------", SystemClock.elapsedRealtime() - startTime));
-            }catch (Exception e){
+            } catch (Exception e) {
                 this.log(String.format("------------end " + tag + " 打印异常%s----------------------------", e.getMessage()));
             }
         }
@@ -50,24 +70,24 @@ public class OkhttpLogInterceptor implements Interceptor {
     }
 
 
-    public synchronized void log(String message) {
-        int len = 2048;
-        if (message.length() < len)
-            Log.d(TAG, message);
+    private synchronized void log(String message) {
+        if (message.length() < logLineMaxLength)
+            Log.println(logLevel,logTag, message);
         else {
-            String[] strings = spiltForLength(message, len);
+            String[] strings = spiltForLength(message, logLineMaxLength);
             for (String string : strings) {
-                Log.d(TAG, string);
+                Log.println(logLevel,logTag, string);
             }
         }
     }
+
     private String[] spiltForLength(String content, int length) {
         int len = content.length();
         int size = len / length + (len % length > 0 ? 1 : 0);
         String[] strings = new String[size];
-        int begin =0;
+        int begin = 0;
         for (int i = 0; i < size; i++) {
-            strings[i] = content.substring(begin, i == size -1? len:begin+length);
+            strings[i] = content.substring(begin, i == size - 1 ? len : begin + length);
             begin += length;
         }
         return strings;

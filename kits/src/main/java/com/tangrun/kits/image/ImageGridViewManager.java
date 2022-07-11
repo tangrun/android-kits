@@ -13,11 +13,11 @@ import java.net.URL;
 
 public class ImageGridViewManager {
 
-    public static  <T> void registerGlobalLoader(Class<T> cls,ImageGridViewImageLoader<T> loader){
+    public static  <T> void registerGlobalLoader(Class<T> cls, ImageLoader<T> loader){
         ImageGridViewAdapter.globalLoaderMap.put(cls, loader);
     }
 
-    private static void internalRegisterGlobalLoader(Class<?> cls,ImageGridViewImageLoader<?> loader){
+    private static void internalRegisterGlobalLoader(Class<?> cls, ImageLoader<?> loader){
         ImageGridViewAdapter.globalLoaderMap.put(cls, loader);
     }
 
@@ -26,7 +26,7 @@ public class ImageGridViewManager {
     }
 
     public static void registerGlideLoader(){
-        ImageGridViewImageLoader<Object> loader = new ImageGridViewImageLoader<Object>() {
+        ImageLoader<Object> loader = new ImageLoader<Object>() {
             @Override
             public void onLoad(ImageView imageView, Object o) {
                 Glide.with(imageView)

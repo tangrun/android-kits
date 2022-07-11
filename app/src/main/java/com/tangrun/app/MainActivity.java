@@ -2,29 +2,23 @@ package com.tangrun.app;
 
 import android.content.Context;
 import android.net.Uri;
-import android.view.View;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.ImageHeaderParserUtils;
 import com.luck.picture.lib.basic.PictureSelector;
 import com.luck.picture.lib.config.PictureSelectionConfig;
 import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.engine.CompressEngine;
 import com.luck.picture.lib.engine.CompressFileEngine;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnCallbackListener;
 import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener;
 import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.tangrun.kits.image.ImageGridView;
-import com.tangrun.kits.image.ImageGridViewImageLoader;
+import com.tangrun.kits.image.ImageLoader;
 import com.tangrun.kits.image.ImageGridViewManager;
 import com.tangrun.kits.image.ImageGridViewOnClickListener;
-import top.zibin.luban.Luban;
-import top.zibin.luban.OnCompressListener;
-import top.zibin.luban.OnRenameListener;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,47 +31,41 @@ public class MainActivity extends AppCompatActivity {
         PictureSelectionConfig.compressFileEngine = new CompressFileEngine() {
             @Override
             public void onStartCompress(Context context, ArrayList<Uri> arrayList, OnKeyValueResultCallbackListener call) {
-                Luban.with(context).load(arrayList).ignoreBy(100)
-                        .setRenameListener(new OnRenameListener() {
-                            @Override
-                            public String rename(String filePath) {
-                                return null;
-                            }
-                        })
-                        .setCompressListener(new OnCompressListener() {
-                            @Override
-                            public void onStart() {
-
-                            }
-
-                            @Override
-                            public void onSuccess(File file) {
-                                if (call != null) {
-                                    call.onCallback(source, compressFile.getAbsolutePath());
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                if (call != null) {
-                                    call.onCallback(source, null);
-                                }
-                            }
-
-                            @Override
-                            public void onSuccess(String source, File compressFile) {
-
-                            }
-
-                            @Override
-                            public void onError(String source, Throwable e) {
-
-                            }
-                        }).launch();
+//                Luban.with(context).load(arrayList).ignoreBy(100)
+//                        .setCompressListener(new OnCompressListener() {
+//                            @Override
+//                            public void onStart() {
+//
+//                            }
+//
+//                            @Override
+//                            public void onSuccess(File file) {
+//                                if (call != null) {
+//                                    call.onCallback(source, compressFile.getAbsolutePath());
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                if (call != null) {
+//                                    call.onCallback(source, null);
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onSuccess(String source, File compressFile) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onError(String source, Throwable e) {
+//
+//                            }
+//                        }).launch();
             }
         };
         ImageGridViewManager.registerGlideLoader();
-        ImageGridViewManager.registerGlobalLoader(LocalMedia.class, new ImageGridViewImageLoader<LocalMedia>() {
+        ImageGridViewManager.registerGlobalLoader(LocalMedia.class, new ImageLoader<LocalMedia>() {
             @Override
             public void onLoad(ImageView imageView, LocalMedia localMedia) {
                 Glide.with(imageView)

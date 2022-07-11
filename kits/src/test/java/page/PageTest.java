@@ -9,7 +9,7 @@ import com.tangrun.kits.page.*;
 public class PageTest {
 
     public void test(AppCompatActivity activity, EditText editText, SmartRefreshLayout refreshLayout){
-        PagerForSmartRefreshLayout build = new PagerForSmartRefreshLayout.Builder(activity)
+        IPager build = new PagerForSmartRefreshLayout.Builder(activity)
                 .setAutoRefresh(true)
                 .setDefaultPagerQuery(editText)
                 .setPagerQuery(new Function<IPager, IPageQuery>() {
@@ -21,7 +21,6 @@ public class PageTest {
                 .setPagerLoader(new IPageLoader() {
                     @Override
                     public void onPageLoad(boolean isRefresh, IPageable pageable) {
-
                     }
                 })
                 .setRefreshLayout(refreshLayout)

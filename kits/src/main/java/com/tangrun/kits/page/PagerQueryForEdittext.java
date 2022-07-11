@@ -33,7 +33,9 @@ public class PagerQueryForEdittext implements TextWatcher, IPageQuery, TextView.
         int maxLines = editText.getMaxLines();
         if (maxLines == 1){
             editText.setOnEditorActionListener(this);
+            editText.removeTextChangedListener(this);
         }else {
+            editText.setOnEditorActionListener(null);
             editText.addTextChangedListener(this);
         }
     }

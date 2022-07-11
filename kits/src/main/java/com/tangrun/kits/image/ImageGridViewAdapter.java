@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.ViewHolder> {
-    static Map<Class<?>, ImageGridViewImageLoader<?>> globalLoaderMap = new HashMap<>();
+    static Map<Class<?>, ImageLoader<?>> globalLoaderMap = new HashMap<>();
     static ImageGridViewOnClickListener globalOnClickListener;
 
 
@@ -28,7 +28,7 @@ class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.Vie
     public Object addItemImage;
     public int dragItemBackgroundColor;
     public final List<Object> objectList = new ArrayList<>();
-    public Map<Class<?>, ImageGridViewImageLoader<?>> loaderMap = new HashMap<>();
+    public Map<Class<?>, ImageLoader<?>> loaderMap = new HashMap<>();
     public ImageGridViewOnClickListener onClickListener;
     ImageGridView imageGridView;
     ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
@@ -116,7 +116,7 @@ class ImageGridViewAdapter extends RecyclerView.Adapter<ImageGridViewAdapter.Vie
 
 
         Object obj = isLastAddItem ? addItemImage : objectList.get(position);
-        ImageGridViewImageLoader loader = null;
+        ImageLoader loader = null;
         loader = loaderMap.get(obj.getClass());
         if (loader == null) {
             loader = globalLoaderMap.get(obj.getClass());
