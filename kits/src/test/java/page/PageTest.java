@@ -3,7 +3,7 @@ package page;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.arch.core.util.Function;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tangrun.kits.page.*;
 
 public class PageTest {
