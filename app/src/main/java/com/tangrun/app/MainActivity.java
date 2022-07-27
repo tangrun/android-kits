@@ -1,12 +1,20 @@
 package com.tangrun.app;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.recyclerview.widget.*;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.ImageHeaderParserUtils;
 import com.luck.picture.lib.basic.PictureSelector;
 import com.luck.picture.lib.config.PictureSelectionConfig;
 import com.luck.picture.lib.config.SelectMimeType;
@@ -18,11 +26,17 @@ import com.tangrun.kits.image.ImageGridView;
 import com.tangrun.kits.image.ImageLoader;
 import com.tangrun.kits.image.ImageGridViewManager;
 import com.tangrun.kits.image.ImageGridViewOnClickListener;
+import com.tangrun.kits.recyclerview.DividerItemDecoration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 List<LocalMedia> list = new ArrayList<>();
                 for (Object o : selectedList) {
                     if (o instanceof LocalMedia)
-                    list.add((LocalMedia) o);
+                        list.add((LocalMedia) o);
                 }
 
                 PictureSelector.create(MainActivity.this)
@@ -116,5 +130,93 @@ public class MainActivity extends AppCompatActivity {
         ImageGridView view = findViewById(R.id.gv_img);
         view.addImage(LocalMedia.generateLocalMedia("https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF", "image/gif"));
         view.addImage(LocalMedia.generateLocalMedia("https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF", "image/jpeg"));
+
+
+        {
+            RecyclerView recyclerView = findViewById(R.id.rv_divider);
+            AtomicInteger atomicInteger = new AtomicInteger(200);
+            findViewById(R.id.bt_notify)
+                    .setOnClickListener(v -> {
+                        atomicInteger.decrementAndGet();
+                        recyclerView.getAdapter().notifyItemRemoved(0);
+//                        recyclerView.getAdapter().notifyDataSetChanged();
+                    });
+
+            recyclerView.addItemDecoration(new DividerItemDecoration(this)
+                    .setShowDivider(RecyclerView.HORIZONTAL, DividerItemDecoration.DIVIDER_ALL)
+                    .setShowDivider(RecyclerView.VERTICAL, DividerItemDecoration.DIVIDER_ALL)
+                    .setDividerDrawableSize(RecyclerView.HORIZONTAL, DividerItemDecoration.DIVIDER_MIDDLE, 16)
+                    .setDividerDrawableSize(RecyclerView.HORIZONTAL, DividerItemDecoration.DIVIDER_BEGIN | DividerItemDecoration.DIVIDER_END, 64)
+                    .setDividerDrawableSize(RecyclerView.VERTICAL, DividerItemDecoration.DIVIDER_ALL, 32)
+                    .setDividerDrawableSize(RecyclerView.VERTICAL, DividerItemDecoration.DIVIDER_BEGIN | DividerItemDecoration.DIVIDER_END, 128)
+            );
+            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+//            GridLayoutManager layoutManager = new GridLayoutManager(this,3,GridLayoutManager.VERTICAL,false);
+//            LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+
+            recyclerView.setLayoutManager(layoutManager);
+
+            recyclerView.setAdapter(new RecyclerView.Adapter() {
+
+                @Override
+                public int getItemViewType(int position) {
+                    return position;
+                }
+
+                @NonNull
+                @NotNull
+                @Override
+                public RecyclerView.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+                    LinearLayout linearLayout = new LinearLayout(parent.getContext());
+                    linearLayout.setBackgroundColor(Color.GRAY);
+                    ViewGroup.LayoutParams layoutParams1 = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    linearLayout.setLayoutParams(layoutParams1);
+                    TextView textView = new TextView(parent.getContext());
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, new Random().nextInt(200), getResources().getDisplayMetrics());
+                    if (viewType <= 3){
+                        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+                    }else {
+                        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+                    }
+                    if (viewType % 3 == 1){
+                        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, getResources().getDisplayMetrics());
+                    }
+
+                    if (viewType == 0){
+                        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1800, getResources().getDisplayMetrics());
+                    }
+                    if (viewType == 1){
+                        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+                    }
+                    if (viewType == 2){
+                        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+                    }
+
+                    textView.setLayoutParams(layoutParams);
+                    textView.setBackgroundColor(Color.RED);
+                    linearLayout.addView(textView);
+                    return new RecyclerView.ViewHolder(linearLayout) {
+                    };
+                }
+
+                @Override
+                public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
+                    Log.d(TAG, "onBindViewHolder: " + position);
+                    if (holder.itemView instanceof ViewGroup) {
+                        View view = ((ViewGroup) holder.itemView).getChildAt(0);
+                        if (view instanceof TextView) {
+                            ((TextView) view).setText(position + " vvvvvvvvvvvvv");
+                        }
+                    }
+                }
+
+                @Override
+                public int getItemCount() {
+                    return 3;
+//                    return atomicInteger.get();
+                }
+            });
+        }
     }
 }

@@ -7,6 +7,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
     <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -30,6 +31,32 @@
                         android:layout_height="wrap_content"/>
 
             </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/bt_notify"
+                        android:text="notify"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_divider"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+
 
         </androidx.cardview.widget.CardView>
 
