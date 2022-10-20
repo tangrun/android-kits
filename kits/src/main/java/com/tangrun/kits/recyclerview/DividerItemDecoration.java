@@ -85,10 +85,10 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             int[] last = new int[spanCount];
             staggeredGridLayoutManager.findLastVisibleItemPositions(last);
             staggeredGridLayoutManager.findFirstVisibleItemPositions(first);
-            Log.d(TAG, "getLayoutManagerInfo: " + Arrays.toString(first) + " " + Arrays.toString(last));
+//            Log.d(TAG, "getLayoutManagerInfo: " + Arrays.toString(first) + " " + Arrays.toString(last));
             staggeredGridLayoutManager.findFirstCompletelyVisibleItemPositions(last);
             staggeredGridLayoutManager.findLastCompletelyVisibleItemPositions(first);
-            Log.d(TAG, "getLayoutManagerInfo c: " + Arrays.toString(first) + " " + Arrays.toString(last));
+//            Log.d(TAG, "getLayoutManagerInfo c: " + Arrays.toString(first) + " " + Arrays.toString(last));
         }
 
         final int childCount = parent.getChildCount();
@@ -114,7 +114,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         } else if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             getItemOffsetsForStaggeredGridLayoutManager(outRect, view, parent, state, (StaggeredGridLayoutManager) parent.getLayoutManager());
         }
-        Log.d(TAG, "getItemOffsets: position: " + parent.getChildAdapterPosition(view) + " \noutRect: " + outRect);
+//        Log.d(TAG, "getItemOffsets: position: " + parent.getChildAdapterPosition(view) + " \noutRect: " + outRect);
     }
 
     /**
