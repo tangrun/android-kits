@@ -10,4 +10,8 @@
         <attr name="spanCount" format="integer"/>
         <attr name="itemCount" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="ScrollableViewPager">
+        <attr name="scrollable" format="boolean"/>
+    </declare-styleable>
 </resources>

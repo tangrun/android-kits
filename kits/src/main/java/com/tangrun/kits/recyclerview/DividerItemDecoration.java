@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import androidx.annotation.Dimension;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -24,7 +25,6 @@ import java.util.Arrays;
 
 /**
  * StaggeredGridLayoutManager时DIVIDER_END 是 DIVIDER_MIDDLE 的效果
- *
  */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -75,7 +75,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             left = 0;
             right = parent.getWidth();
         }
-
 
         if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager) {
 
@@ -207,6 +206,16 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     public DividerItemDecoration setDividerDrawable(@RecyclerView.Orientation int orientation, @Divider int divider, Drawable drawable) {
+
+        switch (orientation) {
+            case RecyclerView.VERTICAL:
+                showDividerVertical = divider;
+                break;
+            case RecyclerView.HORIZONTAL:
+                showDividerHorizontal = divider;
+                break;
+        }
+
         if (hasFlag(divider, DIVIDER_BEGIN)) {
             if (orientation == RecyclerView.VERTICAL) {
                 verticalBeginDrawable = drawable;
@@ -235,7 +244,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         return setDividerDrawableSize(orientation, divider, dp, TypedValue.COMPLEX_UNIT_DIP);
     }
 
-    public DividerItemDecoration setDividerDrawableSize(@RecyclerView.Orientation int orientation, @Divider int divider, int value, int unit) {
+    public DividerItemDecoration setDividerDrawableSize(@RecyclerView.Orientation int orientation, @Divider int divider, int value, @Dimension int unit) {
         int dimension = (int) TypedValue.applyDimension(unit, value, context.getResources().getDisplayMetrics());
         return setDividerDrawable(orientation, divider, getDrawableForSize(dimension));
     }
