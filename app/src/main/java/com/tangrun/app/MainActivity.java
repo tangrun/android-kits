@@ -131,11 +131,11 @@ public class MainActivity extends AppCompatActivity {
 
         {
             ScrollableViewPager viewPager = findViewById(R.id.vp_content);
-            ListFragmentAdapter<Fragment> fragmentAdapter = new ListFragmentAdapter<>(getSupportFragmentManager());
-            fragmentAdapter.addFragment(new MainFragment());
-            fragmentAdapter.addFragment(new MainFragment());
-            fragmentAdapter.addFragment(new MainFragment());
-            fragmentAdapter.addFragment(new MainFragment());
+            ListFragmentAdapter fragmentAdapter = new ListFragmentAdapter(getSupportFragmentManager());
+            fragmentAdapter.add(new MainFragment());
+            fragmentAdapter.add(new MainFragment());
+            fragmentAdapter.add(new MainFragment());
+            fragmentAdapter.add(new MainFragment());
             viewPager.setOffscreenPageLimit(fragmentAdapter.getCount());
             viewPager.setAdapter(fragmentAdapter);
         }

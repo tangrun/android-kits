@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListFragmentAdapter<T extends Fragment> extends FragmentStatePagerAdapter {
+public class ListFragmentAdapter extends FragmentStatePagerAdapter {
     public ListFragmentAdapter(@NonNull @NotNull FragmentManager fm) {
         this(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
@@ -22,7 +22,7 @@ public class ListFragmentAdapter<T extends Fragment> extends FragmentStatePagerA
         super(fm, behavior);
     }
 
-    private final List<Pair<T, String>> fragmentList = new ArrayList<>();
+    private final List<Pair<Fragment, String>> fragmentList = new ArrayList<>();
     @Nullable
     private ViewPager viewPager;
 
@@ -48,21 +48,21 @@ public class ListFragmentAdapter<T extends Fragment> extends FragmentStatePagerA
     /**
      * 添加 Fragment
      */
-    public void addFragment(T fragment) {
+    public void add(Fragment fragment) {
         fragmentList.add(Pair.create(fragment, null));
     }
 
     /**
      * 添加 Fragment
      */
-    public void addFragment(Pair<T, String> pair) {
+    public void add(Pair<Fragment, String> pair) {
         fragmentList.add(pair);
     }
 
     /**
      * 获取当前的Fragment
      */
-    public T getCurrentFragment() {
+    public Fragment getCurrentFragment() {
         return viewPager == null ? null : fragmentList.get(viewPager.getCurrentItem()).first;
     }
 
