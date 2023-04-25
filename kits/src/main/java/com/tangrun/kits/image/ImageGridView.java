@@ -2,20 +2,37 @@ package com.tangrun.kits.image;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.tangrun.kits.R;
+import com.tangrun.kits.adapter.IListAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class ImageGridView extends RecyclerView {
+/**
+ * @author RainTang
+ */
+public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
+
+    private boolean addable;
+    private boolean clearable;
+    private boolean draggable;
+    private int maxCount;
+    private int addIcon;
+
     private GridLayoutManager manager;
-    private ImageGridViewAdapter adapter;
+    private ConcatAdapter concatAdapter;
+    private ImageGridViewAdapter<T> adapter;
+    private ImageGridViewAddAdapter addAdapter;
 
     public ImageGridView(Context context) {
         this(context, null);
@@ -31,44 +48,62 @@ public class ImageGridView extends RecyclerView {
     }
 
     private void init(Context context, AttributeSet attrs) {
-
-
         adapter = new ImageGridViewAdapter();
-        super.setAdapter(adapter);
+        addAdapter = new ImageGridViewAddAdapter();
+        super.setAdapter(concatAdapter = new ConcatAdapter(adapter,addAdapter));
+        adapter.registerAdapterDataObserver(new AdapterDataObserver() {
+            int lastCount = -1;
+            @Override
+            public void onChanged() {
+                int dataListSize = adapter.getDataListSize();
+                if (dataListSize == lastCount) {
+                    return;
+                }
+                lastCount = dataListSize;
+                if (dataListSize >= getMaxCount()){
+                    concatAdapter.removeAdapter(addAdapter);
+                }else {
+                    concatAdapter.addAdapter(addAdapter);
+                }
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                onChanged();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                onChanged();
+            }
+        });
 
         setOverScrollMode(OVER_SCROLL_NEVER);
         TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.ImageGridView);
-        setCanClear(typedArray.getBoolean(R.styleable.ImageGridView_canClear, false));
-        setCanAdd(typedArray.getBoolean(R.styleable.ImageGridView_canAdd, false));
-        setCanDrag(typedArray.getBoolean(R.styleable.ImageGridView_canDrag, false));
-        setMaxSize(typedArray.getInteger(R.styleable.ImageGridView_maxSize, 9));
-        setAddItemImage(typedArray.getResourceId(R.styleable.ImageGridView_addItemImage, R.drawable.kits_baseline_add_box_24));
-        setDragItemBackgroundColor(typedArray.getColor(R.styleable.ImageGridView_dragItemBackgroundColor, Color.parseColor("#E8E8E8")));
+        setClearable(typedArray.getBoolean(R.styleable.ImageGridView_clearable, false));
+        setAddable(typedArray.getBoolean(R.styleable.ImageGridView_addable, false));
+        setDraggable(typedArray.getBoolean(R.styleable.ImageGridView_draggable, false));
+        setMaxCount(typedArray.getInteger(R.styleable.ImageGridView_maxCount, 9));
+        setAddIcon(typedArray.getResourceId(R.styleable.ImageGridView_addIcon, R.drawable.kits_baseline_add_box_24));
 
-        manager = new GridLayoutManager(context, typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3));
-        super.setLayoutManager(manager);
+        super.setLayoutManager(manager = new GridLayoutManager(context, typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3)));
 
         typedArray.recycle();
 
         if (isInEditMode()) {
-            ImageGridViewAdapter.globalLoaderMap.put(Integer.class, new ImageLoader<Integer>() {
+            setOnImageLoadListener(new OnImageLoadListener<Integer>() {
                 @Override
-                public void onLoad(ImageView imageView, Integer integer) {
-                    imageView.setImageResource(integer);
+                public void onLoad(ImageView imageView, Integer data) {
+                    imageView.setImageResource(data);
                 }
             });
             int integer = typedArray.getInteger(R.styleable.ImageGridView_itemCount, 1);
-            List<Object> objectList = new ArrayList<>();
+            List<Integer> imageList = new ArrayList<>();
             for (int i = 0; i < integer; i++) {
-                objectList.add(R.drawable.kits_baseline_image_24);
+                imageList.add(R.drawable.kits_baseline_image_24);
             }
-            addImages(objectList);
+            addAll((List<? extends T>) imageList);
         }
-    }
-
-
-    public void setDragItemBackgroundColor(int color) {
-        adapter.dragItemBackgroundColor = color;
     }
 
     @Override
@@ -81,51 +116,136 @@ public class ImageGridView extends RecyclerView {
 
     }
 
-    public void setAddItemImage(Object image) {
-        adapter.addItemImage = image;
+    //region adapter
+
+    @Override
+    public List<T> getDataList() {
+        return adapter.getDataList();
     }
 
-    public void setCanDrag(boolean canDrag) {
-        adapter.canDrag = canDrag;
+    @Override
+    public void move(int fromPosition, int toPosition, boolean notifyChanged) {
+        adapter.move(fromPosition, toPosition, notifyChanged);
     }
 
-    public void setMaxSize(int maxSize) {
-        adapter.maxSize = maxSize;
+    @Override
+    public void update(int position, T data) {
+        adapter.update(position, data);
     }
 
-    public void setCanAdd(boolean canAdd) {
-        adapter.canAdd = canAdd;
+    @Override
+    public void setList(@NonNull @NotNull List<? extends T> list) {
+        adapter.setList(list);
     }
 
-    public void setCanClear(boolean canClear) {
-        adapter.canClear = canClear;
+    @Override
+    public void remove(int position, boolean notifyChanged) {
+        adapter.remove(position, notifyChanged);
     }
 
-    public List<Object> getImageList() {
-        return adapter.objectList;
+    @Override
+    public void clear() {
+        adapter.clear();
     }
 
-    public void removeImage(Object image) {
-        int i = adapter.objectList.indexOf(image);
-        if (i > -1) {
-            removeImage(i);
-        }
+    @Override
+    public void addAll(@NonNull @NotNull List<? extends T> list) {
+        adapter.addAll(list);
     }
 
-    public void removeImage(int position) {
-        adapter.removeImage(position);
+    @Override
+    public void addAll(int position, @NonNull @NotNull List<? extends T> list, boolean notifyChanged) {
+        adapter.addAll(position, list, notifyChanged);
+    }
+    //endregion
+
+    //region listener
+
+
+    private OnAddImageListener onAddImageListener;
+    private OnPreviewImageListener onPreviewImageListener;
+    private OnImageLoadListener onImageLoadListener;
+
+    public <T> OnAddImageListener<T> getOnAddImageListener() {
+        return onAddImageListener;
     }
 
-    public void setImages(List<Object> images) {
-        adapter.objectList.clear();
-        addImages(images);
+    public <T> void setOnAddImageListener(OnAddImageListener<T> onAddImageListener) {
+        this.onAddImageListener = onAddImageListener;
     }
 
-    public void addImages(List<Object> images) {
-        adapter.addImages(images);
+    public <T> OnPreviewImageListener<T> getOnPreviewImageListener() {
+        return onPreviewImageListener;
     }
 
-    public void addImage(Object image) {
-        adapter.addImage(image);
+    public <T> void setOnPreviewImageListener(OnPreviewImageListener<T> onPreviewImageListener) {
+        this.onPreviewImageListener = onPreviewImageListener;
     }
+
+    public <T> OnImageLoadListener<T> getOnImageLoadListener() {
+        return onImageLoadListener;
+    }
+
+    public void setOnImageLoadListener(OnImageLoadListener<?> onImageLoadListener) {
+        this.onImageLoadListener = onImageLoadListener;
+    }
+
+    public interface OnAddImageListener<T>{
+        void onAddImage(ImageGridView view, List<T> selectedList);
+    }
+
+    public interface OnPreviewImageListener<T>{
+        void onPreviewImage(ImageGridView view, List<T> imageList, int position);
+    }
+
+    public interface OnImageLoadListener<T>{
+        void onLoad(ImageView imageView,T data);
+    }
+
+    //endregion
+
+    //region getter setter
+
+    public boolean isAddable() {
+        return addable;
+    }
+
+    public void setAddable(boolean addable) {
+        this.addable = addable;
+    }
+
+    public boolean isClearable() {
+        return clearable;
+    }
+
+    public void setClearable(boolean clearable) {
+        this.clearable = clearable;
+    }
+
+    public boolean isDraggable() {
+        return draggable;
+    }
+
+    public void setDraggable(boolean draggable) {
+        this.draggable = draggable;
+    }
+
+    public int getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(int maxCount) {
+        this.maxCount = maxCount;
+    }
+
+    public int getAddIcon() {
+        return addIcon;
+    }
+
+    public void setAddIcon(int addIcon) {
+        this.addIcon = addIcon;
+        addAdapter.setList(Collections.singletonList(addIcon));
+    }
+
+    //endregion
 }

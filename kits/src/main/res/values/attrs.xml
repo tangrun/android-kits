@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ImageGridView">
-        <attr name="addItemImage" format="reference"/>
-        <attr name="dragItemBackgroundColor" format="color"/>
-        <attr name="maxSize" format="integer"/>
-        <attr name="canAdd" format="boolean"/>
-        <attr name="canClear" format="boolean"/>
-        <attr name="canDrag" format="boolean"/>
+        <attr name="addIcon" format="reference"/>
+        <attr name="maxCount" format="integer"/>
+        <attr name="addable" format="boolean"/>
+        <attr name="clearable" format="boolean"/>
+        <attr name="draggable" format="boolean"/>
         <attr name="spanCount" format="integer"/>
         <attr name="itemCount" format="integer"/>
+    </declare-styleable>
+    <declare-styleable name="RatioFrameLayout">
+        <attr name="sizeRatio" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="ScrollableViewPager">
+        <attr name="scrollable" format="boolean"/>
     </declare-styleable>
 </resources>

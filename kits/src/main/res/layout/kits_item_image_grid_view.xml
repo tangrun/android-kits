@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<com.tangrun.kits.widget.RatioFrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        xmlns:tool="http://schemas.android.com/tools"
-        android:padding="2dp"
-        android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/iv_img"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-        tool:src="@drawable/kits_baseline_add_box_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="w,1:1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.5" />
-
-
-    <ImageView
-        android:id="@+id/iv_clear"
         android:layout_width="wrap_content"
+        xmlns:tool="http://schemas.android.com/tools"
+        app:sizeRatio="1:1"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dp"
-        android:paddingBottom="15dp"
-        android:src="@drawable/kits_baseline_cancel_24"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            tool:src="@drawable/kits_baseline_add_box_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:src="@drawable/kits_baseline_cancel_24"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+</com.tangrun.kits.widget.RatioFrameLayout>

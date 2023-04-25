@@ -7,8 +7,15 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
     <LinearLayout
+            android:id="@+id/ll_root"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+        <com.tangrun.kits.widget.ScrollableViewPager
+                android:id="@+id/vp_content"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
 
         <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -21,17 +28,27 @@
 
                 <com.tangrun.kits.image.ImageGridView
                         android:id="@+id/gv_img"
-                        app:canAdd="true"
-                        app:canDrag="true"
-                        app:canClear="true"
-                        app:itemCount="10"
-                        app:maxSize="9"
+                        app:addable="true"
+                        app:draggable="true"
+                        app:clearable="true"
+                        app:itemCount="8"
+                        app:maxCount="9"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <FrameLayout
+
+                android:layout_width="300dp"
+                android:layout_height="200dp">
+            <com.tangrun.kits.widget.RatioFrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+        </FrameLayout>
+
 
     </LinearLayout>
 
