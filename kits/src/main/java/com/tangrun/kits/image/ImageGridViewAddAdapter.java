@@ -19,7 +19,7 @@ public class ImageGridViewAddAdapter extends ImageGridViewBaseAdapter<Integer>{
                 if (imageGridView.isAddable()) {
                     ImageGridView.OnAddImageListener<Object> onAddImageListener = imageGridView.getOnAddImageListener();
                     if (onAddImageListener != null) {
-                        onAddImageListener.onAddImage(imageGridView, imageGridView.getDataList());
+                        onAddImageListener.onAddImage(imageGridView, imageGridView.getListAdapter().getDataList());
                     }
                 }
             }

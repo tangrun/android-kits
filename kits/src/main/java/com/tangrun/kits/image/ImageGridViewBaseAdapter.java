@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 abstract class ImageGridViewBaseAdapter<D> extends ListAdapter<D,ImageGridViewViewHolder> {
 
-    protected ImageGridView<Object> imageGridView;
+    protected ImageGridView imageGridView;
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);

@@ -1,22 +1,32 @@
 package com.tangrun.app;
 
+import android.graphics.Color;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.luck.picture.lib.basic.PictureSelector;
 import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.interfaces.OnResultCallbackListener;
-import com.tangrun.kits.adapter.FragmentAdapter;
+import com.tangrun.kits.adapter.ListAdapter;
+import com.tangrun.kits.adapter.ListFragmentAdapter;
 import com.tangrun.kits.image.ImageGridView;
-import com.tangrun.kits.page.PageHelper;
+import com.tangrun.kits.recyclerview.DividerItemDecoration;
 import com.tangrun.kits.widget.ScrollableViewPager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +38,49 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-
         setContentView(R.layout.activity_main);
-        ImageGridView<LocalMedia> view = findViewById(R.id.gv_img);
+
+        {
+            RecyclerView view = findViewById(R.id.rv_divider);
+//            view.setLayoutManager(new LinearLayoutManager(this));
+//            view.setLayoutManager(new GridLayoutManager(this, 5));
+            view.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+            view.addItemDecoration(new DividerItemDecoration(this)
+                    .setDividerDrawableSize(RecyclerView.VERTICAL, DividerItemDecoration.DIVIDER_MIDDLE | DividerItemDecoration.DIVIDER_BEGIN | DividerItemDecoration.DIVIDER_END, 100)
+                    .setDividerDrawableSize(RecyclerView.VERTICAL, DividerItemDecoration.DIVIDER_BEGIN, 4)
+                    .setDividerDrawableSize(RecyclerView.VERTICAL, DividerItemDecoration.DIVIDER_MIDDLE, 8)
+                    .setDividerDrawableSize(RecyclerView.VERTICAL, DividerItemDecoration.DIVIDER_END, 16)
+                    .setDividerDrawableSize(RecyclerView.HORIZONTAL, DividerItemDecoration.DIVIDER_MIDDLE | DividerItemDecoration.DIVIDER_BEGIN | DividerItemDecoration.DIVIDER_END, 100)
+                    .setDividerDrawableSize(RecyclerView.HORIZONTAL, DividerItemDecoration.DIVIDER_BEGIN, 4)
+                    .setDividerDrawableSize(RecyclerView.HORIZONTAL, DividerItemDecoration.DIVIDER_MIDDLE, 8)
+                    .setDividerDrawableSize(RecyclerView.HORIZONTAL, DividerItemDecoration.DIVIDER_END, 16)
+            );
+            ListAdapter<Integer, RecyclerView.ViewHolder> adapter = new ListAdapter<Integer, RecyclerView.ViewHolder>() {
+                @NonNull
+                @NotNull
+                @Override
+                public RecyclerView.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+                    TextView itemView = new TextView(MainActivity.this);
+                    itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    return new RecyclerView.ViewHolder(itemView) {
+                    };
+                }
+
+                @Override
+                public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
+                    TextView textView = (TextView) holder.itemView;
+                    textView.setBackgroundColor(Color.RED);
+                    textView.setText(position + " ");
+                }
+            };
+            for (int i = 0; i < 40; i++) {
+                adapter.add(i);
+            }
+            view.setAdapter(adapter);
+
+        }
+
+        ImageGridView view = findViewById(R.id.gv_img);
         view.setOnImageLoadListener(new ImageGridView.OnImageLoadListener<LocalMedia>() {
             @Override
             public void onLoad(ImageView imageView, LocalMedia data) {
@@ -54,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                         .forResult(new OnResultCallbackListener<LocalMedia>() {
                             @Override
                             public void onResult(ArrayList<LocalMedia> arrayList) {
-                                view.setList(new ArrayList<>(arrayList));
+                                view.getListAdapter().setList(new ArrayList<>(arrayList));
                             }
 
                             @Override
@@ -81,12 +131,12 @@ public class MainActivity extends AppCompatActivity {
 
         {
             ScrollableViewPager viewPager = findViewById(R.id.vp_content);
-            FragmentAdapter<Fragment> fragmentAdapter = new FragmentAdapter<>(getSupportFragmentManager());
-            fragmentAdapter.setAutoMaxOffscreenPageLimit(true);
+            ListFragmentAdapter<Fragment> fragmentAdapter = new ListFragmentAdapter<>(getSupportFragmentManager());
             fragmentAdapter.addFragment(new MainFragment());
             fragmentAdapter.addFragment(new MainFragment());
             fragmentAdapter.addFragment(new MainFragment());
             fragmentAdapter.addFragment(new MainFragment());
+            viewPager.setOffscreenPageLimit(fragmentAdapter.getCount());
             viewPager.setAdapter(fragmentAdapter);
         }
 
@@ -97,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             button.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             llRoot.addView(button);
 
-            button.setText("²åÈëÎ»ÖÃ1");
+            button.setText("æ’å…¥ä½ç½®1");
             button.setOnClickListener(v -> {
                 PictureSelector.create(MainActivity.this)
                         .openGallery(SelectMimeType.ofImage())
@@ -105,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         .forResult(new OnResultCallbackListener<LocalMedia>() {
                             @Override
                             public void onResult(ArrayList<LocalMedia> arrayList) {
-                                view.addAll(1,new ArrayList<>(arrayList));
+                                view.getListAdapter().addAll(new ArrayList<>(arrayList));
                             }
 
                             @Override
@@ -120,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             button.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             llRoot.addView(button);
 
-            button.setText("Ìæ»»");
+            button.setText("æ›¿æ¢");
             button.setOnClickListener(v -> {
                 PictureSelector.create(MainActivity.this)
                         .openGallery(SelectMimeType.ofImage())
@@ -128,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                         .forResult(new OnResultCallbackListener<LocalMedia>() {
                             @Override
                             public void onResult(ArrayList<LocalMedia> arrayList) {
-                                view.setList(new ArrayList<>(arrayList));
+                                view.getListAdapter().setList(new ArrayList<>(arrayList));
                             }
 
                             @Override

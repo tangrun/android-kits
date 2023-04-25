@@ -18,7 +18,7 @@ class ImageGridViewAdapter<T> extends ImageGridViewBaseAdapter<T> {
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        imageGridView = (ImageGridView<Object>) recyclerView;
+        imageGridView = (ImageGridView) recyclerView;
         if (itemTouchHelper == null) {
             itemTouchHelper = new ItemTouchHelper(new ImageGridViewDragCallback(imageGridView, this));
         }

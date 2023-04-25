@@ -49,7 +49,7 @@ public class PageHelper {
         return setLoadResult(success, list == null ? 0 : list.size());
     }
 
-    public boolean isHasMore() {
+    public boolean hasMore() {
         if (totalSize >= 0) {
             return currentSize < totalSize;
         } else {

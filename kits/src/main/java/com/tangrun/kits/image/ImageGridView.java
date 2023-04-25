@@ -4,24 +4,21 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.tangrun.kits.R;
-import com.tangrun.kits.adapter.IListAdapter;
-import org.jetbrains.annotations.NotNull;
+import com.tangrun.kits.adapter.ListAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author RainTang
  */
-public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
+public class ImageGridView extends RecyclerView {
 
     private boolean addable;
     private boolean clearable;
@@ -31,7 +28,7 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
 
     private GridLayoutManager manager;
     private ConcatAdapter concatAdapter;
-    private ImageGridViewAdapter<T> adapter;
+    private ImageGridViewAdapter<?> adapter;
     private ImageGridViewAddAdapter addAdapter;
 
     public ImageGridView(Context context) {
@@ -48,11 +45,22 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
     }
 
     private void init(Context context, AttributeSet attrs) {
-        adapter = new ImageGridViewAdapter();
+        setOverScrollMode(OVER_SCROLL_NEVER);
+        TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.ImageGridView);
+        clearable = typedArray.getBoolean(R.styleable.ImageGridView_clearable, false);
+        addable = typedArray.getBoolean(R.styleable.ImageGridView_addable, false);
+        draggable = typedArray.getBoolean(R.styleable.ImageGridView_draggable, false);
+        maxCount = typedArray.getInteger(R.styleable.ImageGridView_maxCount, 9);
+        addIcon = typedArray.getResourceId(R.styleable.ImageGridView_addIcon, R.drawable.kits_baseline_add_box_24);
+
+        super.setLayoutManager(manager = new GridLayoutManager(context, typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3)));
+
+        adapter = new ImageGridViewAdapter<>();
         addAdapter = new ImageGridViewAddAdapter();
-        super.setAdapter(concatAdapter = new ConcatAdapter(adapter,addAdapter));
+        super.setAdapter(concatAdapter = new ConcatAdapter(adapter, addAdapter));
         adapter.registerAdapterDataObserver(new AdapterDataObserver() {
             int lastCount = -1;
+
             @Override
             public void onChanged() {
                 int dataListSize = adapter.getDataListSize();
@@ -60,11 +68,7 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
                     return;
                 }
                 lastCount = dataListSize;
-                if (dataListSize >= getMaxCount()){
-                    concatAdapter.removeAdapter(addAdapter);
-                }else {
-                    concatAdapter.addAdapter(addAdapter);
-                }
+                resetAdd();
             }
 
             @Override
@@ -77,16 +81,6 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
                 onChanged();
             }
         });
-
-        setOverScrollMode(OVER_SCROLL_NEVER);
-        TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.ImageGridView);
-        setClearable(typedArray.getBoolean(R.styleable.ImageGridView_clearable, false));
-        setAddable(typedArray.getBoolean(R.styleable.ImageGridView_addable, false));
-        setDraggable(typedArray.getBoolean(R.styleable.ImageGridView_draggable, false));
-        setMaxCount(typedArray.getInteger(R.styleable.ImageGridView_maxCount, 9));
-        setAddIcon(typedArray.getResourceId(R.styleable.ImageGridView_addIcon, R.drawable.kits_baseline_add_box_24));
-
-        super.setLayoutManager(manager = new GridLayoutManager(context, typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3)));
 
         typedArray.recycle();
 
@@ -102,7 +96,17 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
             for (int i = 0; i < integer; i++) {
                 imageList.add(R.drawable.kits_baseline_image_24);
             }
-            addAll((List<? extends T>) imageList);
+            getListAdapter().addAll(imageList);
+        }
+    }
+
+    private void resetAdd() {
+        if (addable && adapter.getDataList().size() < getMaxCount()) {
+            if (!concatAdapter.getAdapters().contains(addAdapter)) {
+                concatAdapter.addAdapter(addAdapter);
+            }
+        } else {
+            concatAdapter.removeAdapter(addAdapter);
         }
     }
 
@@ -116,48 +120,9 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
 
     }
 
-    //region adapter
-
-    @Override
-    public List<T> getDataList() {
-        return adapter.getDataList();
+    public <T> ListAdapter<T, ?> getListAdapter() {
+        return (ListAdapter<T, ?>) adapter;
     }
-
-    @Override
-    public void move(int fromPosition, int toPosition, boolean notifyChanged) {
-        adapter.move(fromPosition, toPosition, notifyChanged);
-    }
-
-    @Override
-    public void update(int position, T data) {
-        adapter.update(position, data);
-    }
-
-    @Override
-    public void setList(@NonNull @NotNull List<? extends T> list) {
-        adapter.setList(list);
-    }
-
-    @Override
-    public void remove(int position, boolean notifyChanged) {
-        adapter.remove(position, notifyChanged);
-    }
-
-    @Override
-    public void clear() {
-        adapter.clear();
-    }
-
-    @Override
-    public void addAll(@NonNull @NotNull List<? extends T> list) {
-        adapter.addAll(list);
-    }
-
-    @Override
-    public void addAll(int position, @NonNull @NotNull List<? extends T> list, boolean notifyChanged) {
-        adapter.addAll(position, list, notifyChanged);
-    }
-    //endregion
 
     //region listener
 
@@ -190,16 +155,16 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
         this.onImageLoadListener = onImageLoadListener;
     }
 
-    public interface OnAddImageListener<T>{
+    public interface OnAddImageListener<T> {
         void onAddImage(ImageGridView view, List<T> selectedList);
     }
 
-    public interface OnPreviewImageListener<T>{
+    public interface OnPreviewImageListener<T> {
         void onPreviewImage(ImageGridView view, List<T> imageList, int position);
     }
 
-    public interface OnImageLoadListener<T>{
-        void onLoad(ImageView imageView,T data);
+    public interface OnImageLoadListener<T> {
+        void onLoad(ImageView imageView, T data);
     }
 
     //endregion
@@ -245,6 +210,7 @@ public class ImageGridView<T> extends RecyclerView implements IListAdapter<T>{
     public void setAddIcon(int addIcon) {
         this.addIcon = addIcon;
         addAdapter.setList(Collections.singletonList(addIcon));
+
     }
 
     //endregion
