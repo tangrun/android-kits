@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             button.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             llRoot.addView(button);
 
-            button.setText("æ’å…¥ä½ç½®1");
+            button.setText("²åÈëÎ»ÖÃ1");
             button.setOnClickListener(v -> {
                 PictureSelector.create(MainActivity.this)
                         .openGallery(SelectMimeType.ofImage())
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             button.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             llRoot.addView(button);
 
-            button.setText("æ›¿æ¢");
+            button.setText("Ìæ»»");
             button.setOnClickListener(v -> {
                 PictureSelector.create(MainActivity.this)
                         .openGallery(SelectMimeType.ofImage())
