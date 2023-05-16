@@ -2,13 +2,14 @@ package com.tangrun.kits.image;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOverlay;
 import androidx.annotation.NonNull;
 import com.tangrun.kits.adapter.ListAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ImageGridViewAddAdapter extends ImageGridViewBaseAdapter<Integer>{
+public class ImageGridViewAddAdapter extends ImageGridViewBaseAdapter<Void>{
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull ImageGridViewViewHolder viewHolder, int position) {
@@ -25,5 +26,10 @@ public class ImageGridViewAddAdapter extends ImageGridViewBaseAdapter<Integer>{
             }
         });
         viewHolder.ivClear.setVisibility(View.GONE);
+    }
+
+    @Override
+    public int getItemCount() {
+        return 1;
     }
 }

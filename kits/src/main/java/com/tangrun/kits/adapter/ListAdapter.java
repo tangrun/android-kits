@@ -35,19 +35,11 @@ public abstract class ListAdapter<D, VH extends RecyclerView.ViewHolder> extends
         notifyItemRangeChanged(0, dataList.size());
     }
 
-    public void move(int fromPosition, int toPosition) {
-        move(fromPosition, toPosition, false);
-    }
-
-    public void move(int fromPosition, int toPosition, boolean notifyChange) {
+    public void move(int fromPosition, int toPosition ) {
         checkExists(fromPosition);
         checkExists(toPosition);
         dataList.add(toPosition, dataList.remove(fromPosition));
         notifyItemMoved(fromPosition, toPosition);
-        if (notifyChange) {
-            int min = Math.min(fromPosition, toPosition);
-            notifyItemRangeChanged(min, getItemCount() - min);
-        }
     }
 
     public void update(int position, D data) {
@@ -66,68 +58,34 @@ public abstract class ListAdapter<D, VH extends RecyclerView.ViewHolder> extends
         if (newSize != 0) {
             notifyItemRangeInserted(0, newSize);
         }
-//        if (oldSize > newSize) {
-//            notifyItemRangeRemoved(newSize, oldSize - newSize);
-//            notifyItemRangeChanged(0, newSize);
-//        } else if (oldSize < newSize) {
-//            notifyItemRangeChanged(0, oldSize);
-//            notifyItemRangeInserted(oldSize, newSize - oldSize);
-//        } else {
-//            notifyItemRangeChanged(0, newSize);
-//        }
     }
 
-    public void remove(int position) {
-        remove(position, false);
-    }
-
-    public void remove(int position, boolean notifyChanged) {
+    public void remove(int position ) {
         checkExists(position);
         dataList.remove(position);
         notifyItemRemoved(position);
-        if (notifyChanged) {
-            notifyItemRangeChanged(position, getItemCount() - position);
-        }
     }
 
     public void add(D d) {
         add(dataList.size(), d);
     }
 
-    public void add(int position, D d) {
-        add(position, d, false);
-    }
 
-    public void add(int position, D d, boolean notifyChanged) {
+    public void add(int position, D d ) {
         checkAdd(position);
         dataList.add(position, d);
         notifyItemInserted(position);
-        if (notifyChanged) {
-            int positionStart = position + 1;
-            int itemCount = getItemCount() - positionStart;
-            if (itemCount > 0)
-                notifyItemRangeChanged(positionStart, itemCount);
-        }
     }
 
     public void addAll(@NonNull List<? extends D> list) {
         addAll(dataList.size(), list);
     }
 
-    public void addAll(int position, @NonNull List<? extends D> list) {
-        addAll(position, list, false);
-    }
 
-    public void addAll(int position, @NonNull List<? extends D> list, boolean notifyChanged) {
+    public void addAll(int position, @NonNull List<? extends D> list) {
         checkAdd(position);
         dataList.addAll(position, list);
         notifyItemRangeInserted(position, list.size());
-        if (notifyChanged) {
-            int positionStart = position + list.size();
-            int itemCount = getItemCount() - positionStart;
-            if (itemCount > 0)
-                notifyItemRangeChanged(positionStart, itemCount);
-        }
     }
 
     public void clear() {

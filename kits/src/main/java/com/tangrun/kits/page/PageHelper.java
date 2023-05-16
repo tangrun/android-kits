@@ -37,16 +37,15 @@ public class PageHelper {
         currentSize = 0;
         query = null;
     }
-    public PageHelper setLoadResult(boolean success, int size) {
-        if (success) {
-            pageIndex++;
-            currentSize += size;
-        }
+
+    public PageHelper setLoadSuccess(int size) {
+        pageIndex++;
+        currentSize += size;
         return this;
     }
 
-    public PageHelper setLoadResult(boolean success, List<?> list) {
-        return setLoadResult(success, list == null ? 0 : list.size());
+    public PageHelper setLoadSuccess(List<?> list) {
+        return setLoadSuccess(list == null ? 0 : list.size());
     }
 
     public boolean hasMore() {
@@ -57,7 +56,7 @@ public class PageHelper {
         }
     }
 
-    public boolean isQueryEmpty(){
+    public boolean isQueryEmpty() {
         return TextUtils.isEmpty(query);
     }
 

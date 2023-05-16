@@ -60,7 +60,7 @@ class ImageGridViewAdapter<T> extends ImageGridViewBaseAdapter<T> {
             }
         });
         viewHolder.ivClear.setVisibility(View.VISIBLE);
-        viewHolder.ivClear.setOnClickListener(v -> remove(viewHolder.getBindingAdapterPosition(), false));
+        viewHolder.ivClear.setOnClickListener(v -> remove(viewHolder.getBindingAdapterPosition()));
 
     }
 
@@ -80,12 +80,6 @@ class ImageGridViewAdapter<T> extends ImageGridViewBaseAdapter<T> {
     public void addAll(@NonNull List<? extends T> list) {
         checkSize(list, imageGridView.getMaxCount() - getDataListSize());
         super.addAll(list);
-    }
-
-    @Override
-    public void addAll(int position, @NonNull List<? extends T> list, boolean notifyChanged) {
-        checkSize(list, imageGridView.getMaxCount() - getDataListSize());
-        super.addAll(position, list, notifyChanged);
     }
 
     private void checkSize(List<?> list, int maxSize) {

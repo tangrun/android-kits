@@ -25,6 +25,7 @@ public class ImageGridView extends RecyclerView {
     private boolean draggable;
     private int maxCount;
     private int addIcon;
+    private int spanCount;
 
     private GridLayoutManager manager;
     private ConcatAdapter concatAdapter;
@@ -47,42 +48,21 @@ public class ImageGridView extends RecyclerView {
     private void init(Context context, AttributeSet attrs) {
         setOverScrollMode(OVER_SCROLL_NEVER);
         TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.ImageGridView);
-        clearable = typedArray.getBoolean(R.styleable.ImageGridView_clearable, false);
-        addable = typedArray.getBoolean(R.styleable.ImageGridView_addable, false);
-        draggable = typedArray.getBoolean(R.styleable.ImageGridView_draggable, false);
-        maxCount = typedArray.getInteger(R.styleable.ImageGridView_maxCount, 9);
-        addIcon = typedArray.getResourceId(R.styleable.ImageGridView_addIcon, R.drawable.kits_baseline_add_box_24);
-
-        super.setLayoutManager(manager = new GridLayoutManager(context, typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3)));
 
         adapter = new ImageGridViewAdapter<>();
         addAdapter = new ImageGridViewAddAdapter();
-        super.setAdapter(concatAdapter = new ConcatAdapter(adapter, addAdapter));
-        adapter.registerAdapterDataObserver(new AdapterDataObserver() {
-            int lastCount = -1;
+        concatAdapter = new ConcatAdapter(adapter, addAdapter);
+        manager = new GridLayoutManager(context, typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3));
 
-            @Override
-            public void onChanged() {
-                int dataListSize = adapter.getDataListSize();
-                if (dataListSize == lastCount) {
-                    return;
-                }
-                lastCount = dataListSize;
-                resetAdd();
-            }
+        setClearable(typedArray.getBoolean(R.styleable.ImageGridView_clearable, false));
+        setAddable(typedArray.getBoolean(R.styleable.ImageGridView_addable, false));
+        setDraggable(typedArray.getBoolean(R.styleable.ImageGridView_draggable, false));
+        setMaxCount(typedArray.getInteger(R.styleable.ImageGridView_maxCount, 9));
+        setAddIcon(typedArray.getResourceId(R.styleable.ImageGridView_addIcon, R.drawable.kits_baseline_add_box_24));
+        setSpanCount(typedArray.getInteger(R.styleable.ImageGridView_spanCount, 3));
 
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                onChanged();
-            }
-
-            @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                onChanged();
-            }
-        });
-
-        typedArray.recycle();
+        super.setAdapter(concatAdapter);
+        super.setLayoutManager(manager);
 
         if (isInEditMode()) {
             setOnImageLoadListener(new OnImageLoadListener<Integer>() {
@@ -98,9 +78,39 @@ public class ImageGridView extends RecyclerView {
             }
             getListAdapter().addAll(imageList);
         }
+
+        typedArray.recycle();
+
+        adapter.registerAdapterDataObserver(new AdapterDataObserver() {
+            int lastCount = -1;
+
+            @Override
+            public void onChanged() {
+                int dataListSize = adapter.getDataListSize();
+                if (dataListSize == lastCount) {
+                    return;
+                }
+                lastCount = dataListSize;
+                resetAdapter();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                onChanged();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                onChanged();
+            }
+        });
     }
 
-    private void resetAdd() {
+    private void resetManager(){
+        manager.setSpanCount(spanCount);
+    }
+
+    private void resetAdapter() {
         if (addable && adapter.getDataList().size() < getMaxCount()) {
             if (!concatAdapter.getAdapters().contains(addAdapter)) {
                 concatAdapter.addAdapter(addAdapter);
@@ -108,6 +118,13 @@ public class ImageGridView extends RecyclerView {
         } else {
             concatAdapter.removeAdapter(addAdapter);
         }
+    }
+
+    private void notifyAdapter(){
+        adapter.notifyAllItemChanged();
+    }
+    private void notifyAddAdapter(){
+        addAdapter.notifyAllItemChanged();
     }
 
     @Override
@@ -177,6 +194,7 @@ public class ImageGridView extends RecyclerView {
 
     public void setAddable(boolean addable) {
         this.addable = addable;
+        resetAdapter();
     }
 
     public boolean isClearable() {
@@ -185,6 +203,7 @@ public class ImageGridView extends RecyclerView {
 
     public void setClearable(boolean clearable) {
         this.clearable = clearable;
+        notifyAdapter();
     }
 
     public boolean isDraggable() {
@@ -193,6 +212,7 @@ public class ImageGridView extends RecyclerView {
 
     public void setDraggable(boolean draggable) {
         this.draggable = draggable;
+        notifyAdapter();
     }
 
     public int getMaxCount() {
@@ -201,6 +221,7 @@ public class ImageGridView extends RecyclerView {
 
     public void setMaxCount(int maxCount) {
         this.maxCount = maxCount;
+        resetAdapter();
     }
 
     public int getAddIcon() {
@@ -209,8 +230,16 @@ public class ImageGridView extends RecyclerView {
 
     public void setAddIcon(int addIcon) {
         this.addIcon = addIcon;
-        addAdapter.setList(Collections.singletonList(addIcon));
+        notifyAddAdapter();
+    }
 
+    public int getSpanCount() {
+        return spanCount;
+    }
+
+    public void setSpanCount(int spanCount) {
+        this.spanCount = spanCount;
+        resetManager();
     }
 
     //endregion

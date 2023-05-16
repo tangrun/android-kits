@@ -6,6 +6,9 @@ import androidx.arch.core.util.Function;
 import java.lang.reflect.*;
 import java.util.*;
 
+/**
+ * 获取泛型工具类
+ */
 public class FindTypeUtil {
 
 

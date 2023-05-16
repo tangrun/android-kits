@@ -88,7 +88,7 @@ class ImageGridViewDragCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-        adapter.move(viewHolder.getLayoutPosition(), target.getLayoutPosition(),false);
+        adapter.move(viewHolder.getLayoutPosition(), target.getLayoutPosition());
         return false;
     }
 
