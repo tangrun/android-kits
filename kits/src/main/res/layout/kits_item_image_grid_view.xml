@@ -16,9 +16,6 @@
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             tool:src="@drawable/kits_baseline_add_box_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="w,1:1"
-            app:layout_constraintTop_toTopOf="parent"
             />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -27,8 +24,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|top"
             android:src="@drawable/kits_baseline_cancel_24"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             />
 
 </com.tangrun.kits.widget.RatioFrameLayout>

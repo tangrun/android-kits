@@ -59,7 +59,7 @@ class ImageGridViewAdapter<T> extends ImageGridViewBaseAdapter<T> {
                 return false;
             }
         });
-        viewHolder.ivClear.setVisibility(View.VISIBLE);
+        viewHolder.ivClear.setVisibility(imageGridView.isClearable() ? View.VISIBLE : View.GONE);
         viewHolder.ivClear.setOnClickListener(v -> remove(viewHolder.getBindingAdapterPosition()));
 
     }
